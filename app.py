@@ -152,17 +152,23 @@ DEMO_LEADS = [
 
 def calc_cpe(df):
     df = df.copy()
-    df["cpe"] = df.apply(lambda r: round(r["spend"]/r["engagements"], 2) if r["engagements"] > 0 else 0, axis=1)
+    for col in ["engagements","impressions","reach","roas","cpl","leads","ctr","cpc","frequency","results","spend"]:
+        if col not in df.columns:
+            df[col] = 0
+    df["cpe"] = df.apply(
+        lambda r: round(float(r["spend"]) / float(r["engagements"]), 2) if float(r.get("engagements", 0)) > 0 else 0, axis=1
+    )
     return df
 
 KPI_CONFIG = {
-    "ROAS":       {"col":"roas",       "higher_better":True,  "fmt":"{}x"},
-    "CPL ($)":    {"col":"cpl",        "higher_better":False, "fmt":"${}"},
-    "CTR (%)":    {"col":"ctr",        "higher_better":True,  "fmt":"{}%"},
-    "CPE ($)":    {"col":"cpe",        "higher_better":False, "fmt":"${}"},
-    "Frequency":  {"col":"frequency",  "higher_better":False, "fmt":"{}"},
-    "Spend ($)":  {"col":"spend",      "higher_better":True,  "fmt":"${}"},
-    "Leads":      {"col":"leads",      "higher_better":True,  "fmt":"{}"},
+    "Spend ($)":   {"col":"spend",       "higher_better":True,  "fmt":"${}"},
+    "ROAS":        {"col":"roas",        "higher_better":True,  "fmt":"{}x"},
+    "CPL ($)":     {"col":"cpl",         "higher_better":False, "fmt":"${}"},
+    "Results":     {"col":"results",     "higher_better":True,  "fmt":"{}"},
+    "CTR (%)":     {"col":"ctr",         "higher_better":True,  "fmt":"{}%"},
+    "CPE ($)":     {"col":"cpe",         "higher_better":False, "fmt":"${}"},
+    "Frequency":   {"col":"frequency",   "higher_better":False, "fmt":"{}"},
+    "Impressions": {"col":"impressions", "higher_better":True,  "fmt":"{}"},
 }
 
 def fmt_val(v, key):
